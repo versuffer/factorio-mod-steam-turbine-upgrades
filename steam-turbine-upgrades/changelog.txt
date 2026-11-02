@@ -1,10 +1,16 @@
  ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 01. 11. 2026
+  Changes:
+    - MK3 default output 180 MW (setting ceiling raised to 300 MW).
+    - MK3 steam buffer increased to 6000.
+ ---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 01. 11. 2026
   Features:
     - Added MK2 steam turbine: 60 MW by default, 5x7 tiles (200 kg per unit - a full stack fits into one rocket).
-    - Added MK3 steam turbine: 180 MW by default, 7x10 tiles, steam buffer of 6000 (1 ton per unit - one unit per rocket).
+    - Added MK3 steam turbine: 140 MW by default, 7x10 tiles (1 ton per unit - one unit per rocket).
     - Both turbines consume steam in proportion to their power output (~10.3 steam/s per MW), like a row of vanilla turbines; steam hotter than 500°C gives no bonus.
-    - Power output of both turbines is configurable in mod settings (MK2: 10-100 MW, MK3: 16-300 MW; steam consumption scales with it).
+    - Power output of both turbines is configurable in mod settings (MK2: 10-100 MW, MK3: 16-250 MW; steam consumption scales with it).
     - MK2 technology requires heating tower with Space Age, nuclear power otherwise. MK3 requires MK2.
     - Separated recipe ingredient sets for Space Age (with tungsten plates) and vanilla chains; the MK3 recipe costs exactly 3x the MK2 recipe.
