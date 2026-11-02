@@ -12,8 +12,8 @@ local mk3_power_setting = {
     name = "steam-turbine-upgrades-mk3-power-mw",
     setting_type = "startup",
     minimum_value = 16,
-    maximum_value = 250,
-    default_value = 140
+    maximum_value = 300,
+    default_value = 180
 }
 
 data.extend({mk2_power_setting, mk3_power_setting})
