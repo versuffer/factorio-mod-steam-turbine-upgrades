@@ -21,7 +21,7 @@
         -   End-game tier;
         -   Produces 180 MW by default, occupies 7x10 tiles;
         -   Same steam consumption model as the MK2;
-        -   Steam buffer of 5000 steam (MK2 holds 2000), so it absorbs demand spikes smoothly;
+        -   Steam buffer of 6000 steam (MK2 holds 2000), so it absorbs demand spikes smoothly;
 
     ## Additional features
 

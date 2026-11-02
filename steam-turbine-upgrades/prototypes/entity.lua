@@ -242,7 +242,7 @@ data.extend({
         health = 900,
         collision_box = {{-3.25, -4.75}, {3.25, 4.75}},
         selection_box = {{-3.5, -5}, {3.5, 5}},
-        fluid_box = steam_fluid_box(4.5, 5000),
+        fluid_box = steam_fluid_box(4.5, 6000),
         smoke_positions = {
             -- original north/east positions, scaled; vertical art is shared
             -- by north and south, so the smoke stays top-right in both vertical orientations
