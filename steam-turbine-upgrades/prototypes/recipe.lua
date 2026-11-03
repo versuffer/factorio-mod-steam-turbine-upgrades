@@ -17,9 +17,17 @@ local mk3_ingredients = {
     {type = "item", name = "copper-plate", amount = 750}
 }
 
+-- Big Heat Exchanger = vanilla heat exchanger * 6 (60 steel, 600 copper, 60 pipes).
+local bhe_ingredients = {
+    {type = "item", name = "steel-plate", amount = 60},
+    {type = "item", name = "copper-plate", amount = 600},
+    {type = "item", name = "pipe", amount = 60}
+}
+
 if is_space_age then
     table.insert(mk2_ingredients, {type = "item", name = "tungsten-plate", amount = 50})
     table.insert(mk3_ingredients, {type = "item", name = "tungsten-plate", amount = 150})
+    table.insert(bhe_ingredients, {type = "item", name = "tungsten-plate", amount = 50})
 end
 
 data.extend({
@@ -38,5 +46,13 @@ data.extend({
         enabled = false,
         ingredients = mk3_ingredients,
         results = {{type = "item", name = "steam-turbine-mk3", amount = 1}}
+    },
+    {
+        type = "recipe",
+        name = "big-heat-exchanger",
+        energy_required = 18, -- vanilla exchanger takes 3 s
+        enabled = false,
+        ingredients = bhe_ingredients,
+        results = {{type = "item", name = "big-heat-exchanger", amount = 1}}
     }
 })

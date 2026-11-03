@@ -47,7 +47,8 @@ data.extend({
         type = "technology",
         name = "steam-turbine-mk3",
         effects = {
-            {type = "unlock-recipe", recipe = "steam-turbine-mk3"}
+            {type = "unlock-recipe", recipe = "steam-turbine-mk3"},
+            {type = "unlock-recipe", recipe = "big-heat-exchanger"}
         },
         icon = "__steam-turbine-upgrades__/graphics/entity/steam-turbine-mk3/tech-icon.png",
         icon_size = 500,

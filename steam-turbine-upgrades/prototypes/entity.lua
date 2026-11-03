@@ -1,9 +1,12 @@
+local sounds = require("__base__.prototypes.entity.sounds")
+
 -- Vanilla steam turbine at full load (5.82 MW / 60 steam/s => 97 kJ per unit at 500 C):
 -- steam-per-MW = 60 / 5.82 ≈ 10.31 steam/s per MW.
 local steam_per_mw_per_tick = 10.31 / 60 -- ≈ 0.1718 steam per tick per MW
 
 local mk2_power = settings.startup["steam-turbine-upgrades-mk2-power-mw"].value
 local mk3_power = settings.startup["steam-turbine-upgrades-mk3-power-mw"].value
+local big_heat_exchanger_power = settings.startup["steam-turbine-upgrades-big-heat-exchanger-power-mw"].value
 
 local working_sound = {
     sound = {
@@ -223,6 +226,187 @@ local function mk_turbine(name, power_mw, extra)
     }
 end
 
+-- Big Heat Exchanger: 6 vanilla heat exchangers in one 5x5 footprint.
+-- Vanilla exchanger: 10 MW of heat -> 103.09 steam/s at 500 C, so ours produces
+-- proportionally to the configured power (60 MW -> ~618.5 steam/s).
+-- Sprites are the SE big heat exchanger art (as used by Linox); heat pipe covers
+-- and heat glow come straight from base.
+
+local function bhe_heated_picture(filename, width, height, shift)
+    return {
+        tint = {1, 1, 1, 1},
+        blend_mode = "additive",
+        filename = "__steam-turbine-upgrades__/graphics/entity/big-heat-exchanger/" .. filename,
+        frame_count = 1,
+        line_length = 1,
+        width = width,
+        height = height,
+        shift = shift,
+        scale = 0.5
+    }
+end
+
+local function bhe_pipe_cover(x)
+    return {
+        filename = "__base__/graphics/entity/heat-exchanger/heatex-endings.png",
+        frame_count = 1,
+        width = 64,
+        height = 64,
+        priority = "high",
+        scale = 0.5,
+        x = x,
+        y = 0
+    }
+end
+
+local function bhe_heated_pipe_cover(x)
+    local cover = bhe_pipe_cover(x)
+    cover.filename = "__base__/graphics/entity/heat-exchanger/heatex-endings-heated.png"
+    cover.tint = {1, 1, 1, 1}
+    cover.blend_mode = "additive"
+    return cover
+end
+
+local function bhe_heat_glow(filename, width, height, shift, tint)
+    return {
+        filename = "__base__/graphics/entity/heat-exchanger/" .. filename,
+        width = width,
+        height = height,
+        priority = "extra-high",
+        shift = shift,
+        tint = tint
+    }
+end
+
+local function bhe_pictures(direction, shadow_width, shadow_height, shadow_shift)
+    return {
+        structure = {
+            layers = {
+                {
+                    filename = "__steam-turbine-upgrades__/graphics/entity/big-heat-exchanger/" .. direction .. ".png",
+                    frame_count = 1,
+                    line_length = 1,
+                    width = 384,
+                    height = 384,
+                    shift = {0, -0.5},
+                    scale = 0.5
+                },
+                {
+                    draw_as_shadow = true,
+                    filename = "__steam-turbine-upgrades__/graphics/entity/big-heat-exchanger/" .. direction .. "_shadow.png",
+                    frame_count = 1,
+                    line_length = 1,
+                    width = shadow_width,
+                    height = shadow_height,
+                    shift = shadow_shift,
+                    scale = 0.5
+                }
+            }
+        }
+    }
+end
+
+local function big_heat_exchanger(power_mw)
+    return {
+        type = "boiler",
+        name = "big-heat-exchanger",
+        icon = "__steam-turbine-upgrades__/graphics/icons/big-heat-exchanger.png",
+        icon_size = 64,
+        flags = {"placeable-neutral", "player-creation"},
+        minable = {mining_time = 0.3, result = "big-heat-exchanger"},
+        max_health = 500,
+        corpse = "big-remnants",
+        dying_explosion = "medium-explosion",
+        impact_category = "metal-large",
+        resistances = {
+            {type = "fire", percent = 90},
+            {type = "explosion", percent = 30},
+            {type = "impact", percent = 30}
+        },
+        collision_box = {{-2.3, -2.3}, {2.3, 2.3}},
+        selection_box = {{-2.5, -2.5}, {2.5, 2.5}},
+        drawing_box_vertical_extension = 1.5,
+        mode = "output-to-separate-pipe",
+        target_temperature = 500,
+        energy_consumption = tostring(power_mw) .. "MW",
+        burning_cooldown = 20,
+        fluid_box = {
+            volume = 1000,
+            filter = "water",
+            production_type = "input",
+            pipe_covers = pipecoverspictures(),
+            pipe_connections = {
+                {flow_direction = "input-output", direction = defines.direction.west, position = {-2, 1}},
+                {flow_direction = "input-output", direction = defines.direction.east, position = {2, 1}}
+            }
+        },
+        output_fluid_box = {
+            volume = 2000,
+            filter = "steam",
+            production_type = "output",
+            pipe_covers = pipecoverspictures(),
+            pipe_connections = {
+                {flow_direction = "output", direction = defines.direction.north, position = {0, -2}}
+            }
+        },
+        energy_source = {
+            type = "heat",
+            max_temperature = 1000,
+            specific_heat = "1MJ",
+            max_transfer = "2GW",
+            min_working_temperature = 500,
+            minimum_glow_temperature = 350,
+            connections = {
+                {position = {0, 2}, direction = defines.direction.south}
+            },
+            pipe_covers = {
+                east = bhe_pipe_cover(64),
+                north = bhe_pipe_cover(0),
+                south = bhe_pipe_cover(128),
+                west = bhe_pipe_cover(192)
+            },
+            heat_pipe_covers = {
+                east = bhe_heated_pipe_cover(64),
+                north = bhe_heated_pipe_cover(0),
+                south = bhe_heated_pipe_cover(128),
+                west = bhe_heated_pipe_cover(192)
+            },
+            heat_picture = {
+                east = bhe_heated_picture("east_heated.png", 128, 128, {-2, -0.5}),
+                north = bhe_heated_picture("north_heated.png", 64, 160, {0, 1.25}),
+                south = bhe_heated_picture("south_heated.png", 64, 64, {0, -2.5}),
+                west = bhe_heated_picture("west_heated.png", 128, 128, {2, -0.5})
+            },
+            heat_glow = {
+                east = bhe_heat_glow("heatex-E-heated.png", 60, 62, {-2.1875, -0.875}),
+                north = bhe_heat_glow("heatex-N-heated.png", 38, 70, {0, 1.25}, {r = 1, g = 0.85, b = 0.75}),
+                south = bhe_heat_glow("heatex-S-heated.png", 28, 40, {0, -2.125}),
+                west = bhe_heat_glow("heatex-W-heated.png", 60, 64, {2.125, -0.875})
+            }
+        },
+        circuit_connector = circuit_connector_definitions["boiler"],
+        circuit_wire_max_distance = default_circuit_wire_max_distance,
+        open_sound = sounds.steam_open,
+        close_sound = sounds.steam_close,
+        working_sound = {
+            sound = {
+                filename = "__base__/sound/heat-exchanger.ogg",
+                volume = 0.65,
+                modifiers = volume_multiplier("main-menu", 0.7),
+                audible_distance_modifier = 0.5
+            },
+            fade_in_ticks = 4,
+            fade_out_ticks = 20
+        },
+        pictures = {
+            east = bhe_pictures("east", 512, 352, {1, 0.25}),
+            north = bhe_pictures("north", 512, 320, {1.5, 0.5}),
+            south = bhe_pictures("south", 512, 256, {1.5, 0.5}),
+            west = bhe_pictures("west", 448, 352, {1, 0.25})
+        }
+    }
+end
+
 data.extend({
     mk_turbine("steam-turbine-mk2", mk2_power, {
         health = 600,
@@ -257,5 +441,6 @@ data.extend({
             east = {animation = mk3_horizontal_animation},
             west = {animation = mk3_horizontal_animation}
         }
-    })
+    }),
+    big_heat_exchanger(big_heat_exchanger_power)
 })

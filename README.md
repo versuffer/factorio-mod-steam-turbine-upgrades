@@ -1,6 +1,6 @@
     ## Steam Turbine Upgrades
 
-    Adds two bigger steam turbines: MK2 and MK3. They run on regular late-game steam and consume it at the same rate per MW as the vanilla turbine, so they only save space, not steam. Power output is adjustable in mod settings.
+    Adds two bigger steam turbines: MK2 and MK3, plus a big heat exchanger. The turbines run on regular late-game steam and consume it at the same rate per MW as the vanilla turbine, so they only save space, not steam. Power output is adjustable in mod settings.
 
     ## New technologies
 
@@ -9,6 +9,7 @@
         -   Nuclear power - otherwise;
     -   Steam Turbine MK3 (1000 of each science pack), unlocks after:
         -   Steam Turbine MK2;
+    -   The MK3 technology also unlocks the Big Heat Exchanger;
 
     ## New entities
 
@@ -22,17 +23,22 @@
         -   Produces 180 MW by default, occupies 7x10 tiles;
         -   Same steam consumption model as the MK2;
         -   Steam buffer of 6000 steam (MK2 holds 2000), so it absorbs demand spikes smoothly;
+    -   Big heat exchanger:
+        -   Consumes 60 MW of heat by default, occupies 5x5 tiles;
+        -   Produces steam like 6 vanilla heat exchangers (~618.5 steam/s at 500°C);
+        -   One heat port (south), one steam output (north), water in from the sides - consolidates 6 vanilla exchangers into a single entity;
 
     ## Additional features
 
-    -   Power output of both turbines is configurable in settings (MK2: 10-100 MW, MK3: 16-300 MW; changing it requires a restart);
-    -   Steam consumption scales with the output setting automatically;
+    -   Power output of the turbines and heat consumption of the big heat exchanger are configurable in settings (MK2: 10-100 MW, MK3: 16-300 MW, exchanger: 16-100 MW; changing it requires a restart);
+    -   Steam consumption/production scales with the output setting automatically;
+    -   The big heat exchanger recipe costs exactly 6x the vanilla heat exchanger (60 steel, 600 copper, 60 pipes);
     -   Without Space Age:
         -   The technology tree falls back to the vanilla branch (after nuclear power);
         -   Recipes use only vanilla items;
         -   In the Space Age branch the recipes also use tungsten plates;
     -   The MK3 recipe costs exactly 3x the MK2 recipe;
-    -   Weighs 200 kg per unit (a full stack of 5 fits into one rocket) for MK2 and one ton (exactly one per rocket) for MK3;
+    -   Weighs 500 kg per unit (two units per rocket) for MK2 and the big heat exchanger, and one ton (exactly one per rocket) for MK3;
     -   Vanilla turbine sound and smoke, tuned per orientation;
 
     ## Existing saves
